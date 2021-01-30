@@ -5,11 +5,17 @@
     <hr>
 
     <h2>Latest Updates</h2>
+    <h2>start test</h2>
+
+    {% for c in categories_tops %}
+        <h3>{{ c }}</h3>
+    {% endfor %}
+
+    <h2>end test</h2>
+    <h1>{{ testthing }}</h1>
 
     {% for category in categories %}
         <h2>{{ category.name }}</h2>
-
-        temppost = {% blog_pop_category %}
 
         {% for post in posts %}
             <h2><a href="{% url 'blog_detail' post.pk%}">{{ post.title }}</a></h2>

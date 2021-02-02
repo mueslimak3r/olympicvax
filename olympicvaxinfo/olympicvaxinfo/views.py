@@ -18,7 +18,9 @@ def blog_index(request):
     categories = Category.objects.all().order_by('-name')
     categories_latests = []
     for c in categories:
-        categories_latests.append(get_latest_from_category(c))
+        tmp = get_latest_from_category(c)
+        if tmp:
+            categories_latests.append(tmp)
     context = {
         "posts": posts,
         "categories": categories,

@@ -5,14 +5,19 @@ import requests
 from bs4 import BeautifulSoup
 
 import time
+import glob
 import re
+import os
 
-SOURCE_URLS = [
-    "https://jeffersonhealthcare.org/covid-19-vaccine/",
-]
 
-# This is a pretty simple script. The script downloads the homepage of VentureBeat, and if it finds some text, emails me.
-# If it does not find some text, it waits 60 seconds and downloads the homepage again.
+
+
+
+SOURCE_URLS = {
+    "jeffersonhealthcare": "https://jeffersonhealthcare.org/covid-19-vaccine/",
+}
+
+tmpdir = os.path.dirname(os.path.realpath(__file__)) + '/website-dumps/'
 
 def scrape(url = None):
     if url == None:
@@ -25,11 +30,66 @@ def scrape(url = None):
     return (soup)
 
 def scrape_jeffhealthcare():
-    soup = scrape(SOURCE_URLS[0])
+    soup = scrape(SOURCE_URLS['jeffersonhealthcare'])
 
     mydivs = soup.findAll("div", {"class": "vc_row"})[1].get_text()
-    print ('\r\n'.join([x for x in mydivs.splitlines() if x.strip()]))
+    data = '\r\n'.join([x for x in mydivs.splitlines() if x.strip()])
+    return data
+
+
+
+
+
+SOURCE_FUNCTIONS = {
+    "jeffersonhealthcare": scrape_jeffhealthcare,
+}
+
+# set up folder structure to save page dumps for each source in their own subdirectory
+try:
+    os.mkdir(tmpdir)
+except:
+    pass
+
+for name in SOURCE_URLS:
+    path = os.path.join(tmpdir, name)
+    try:
+        os.mkdir(path)
+    except:
+        pass
+
+import difflib
 
 while True:
-    scrape_jeffhealthcare()
-    time.sleep(60)
+    for name in SOURCE_URLS:
+        data = SOURCE_FUNCTIONS[name]()
+        ts = time.time()
+
+        list_of_files = glob.glob(tmpdir + name + '/' + '*')
+        if list_of_files:
+            latest_file_name = max(list_of_files)
+            latest_file = open(latest_file_name, 'r')
+
+            stream = latest_file.read().splitlines()[2:]
+            datastream = data.splitlines()
+
+            if (stream == datastream):
+                print('no change')
+                continue
+            else:
+                print('detected change')
+
+                d = difflib.Differ()
+                result = list(d.compare(stream, datastream))
+                print(result)
+
+        filename = os.path.join(tmpdir, name + '/' + str(int(ts)))
+        curtime = time.strftime('%X %x %Z')
+        towrite = str(int(ts)) + '\n' + curtime + '\n' + data
+
+        f = open(filename, 'w+')
+        f.write(towrite)
+        f.close()
+        print('new dump at ' + curtime)  
+        
+
+    time.sleep(10)

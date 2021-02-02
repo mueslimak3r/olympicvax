@@ -2,26 +2,27 @@ from django.shortcuts import render
 from olympicvaxinfo.models import Post, Comment, Category
 from .forms import CommentForm
 
-def blog_pop_category(category):
-    firstpost = Post.objects.filter(
-        categories__name__contains=category
-    ).order_by(
-        '-created_on'
-    ).first()
+def get_latest_from_category(category):
+    try:
+        firstpost = Post.objects.filter(
+            categories__name__contains=category.name
+        ).order_by(
+            '-created_on'
+        )[0]
+    except:
+        firstpost = None
     return (firstpost)
 
 def blog_index(request):
     posts = Post.objects.all().order_by('-created_on')
     categories = Category.objects.all().order_by('-name')
-    categories_tops = []
-    testthing = "HELLO"
+    categories_latests = []
     for c in categories:
-        categories_tops.append(blog_pop_category(c))
+        categories_latests.append(get_latest_from_category(c))
     context = {
         "posts": posts,
         "categories": categories,
-        "categories_tops": categories_tops,
-        "testthing": testthing,
+        "categories_latests": categories_latests,
     }
     return render(request, "blog_index.html", context)
 

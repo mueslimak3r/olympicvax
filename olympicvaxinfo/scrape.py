@@ -5,13 +5,14 @@ import requests
 from bs4 import BeautifulSoup
 
 import time
+import datetime
 import glob
 import re
 import os
 
 
 
-
+sleeptime = 10
 
 SOURCE_URLS = {
     "jeffersonhealthcare": "https://jeffersonhealthcare.org/covid-19-vaccine/",
@@ -33,13 +34,20 @@ def scrape(url = None):
         return
     #headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
     # download the homepage
-    response = requests.get(url)#, headers=headers)
-    # parse the downloaded homepage and grab all text, then,
-    soup = BeautifulSoup(response.text, "html.parser")
-    return (soup)
+    try:
+        response = requests.get(url, timeout = 5)
+        print("downloaded")
+        soup = BeautifulSoup(response.text, "html.parser")
+        return (soup)
+    except:
+        print("response error!")
+        return ("Error") 
 
 def jeffersonhealthcare(name):
     soup = scrape(SOURCE_URLS[name])
+    if soup == "Error":
+        print("bad")
+        return soup
 
     mydivs = soup.findAll("div", {"class": "vc_row"})[1].get_text()
     data = '\r\n'.join([x for x in mydivs.splitlines() if x.strip()])
@@ -47,6 +55,9 @@ def jeffersonhealthcare(name):
 
 def cameronlambert(name):
     soup = scrape(SOURCE_URLS[name])
+    if soup == "Error":
+        print("worked")
+        return soup
 
     mydivs = soup.find("p").get_text()
     #data = '\r\n'.join([x for x in mydivs.splitlines() if x.strip()])
@@ -55,16 +66,21 @@ def cameronlambert(name):
 def bainbridgeprepares(name):
     soup = scrape(SOURCE_URLS[name])
     print(soup)
-    exit()
+    
+    return "Error"
     #mydivs = soup.find("div", {"id": "welcomeText"})
     #data = '\r\n'.join([x for x in mydivs.splitlines() if x.strip()])
-    return data
+
 
 # set up folder structure to save page dumps for each source in their own subdirectory
+
+os.system('python3 manage.py save-top-posts-to-file --path ' + tmpdir)
+
 try:
     os.mkdir(tmpdir)
 except:
     pass
+
 
 for name in SOURCE_URLS:
     path = os.path.join(tmpdir, name)
@@ -79,14 +95,15 @@ while True:
     for name in SOURCE_URLS:
         print("name: ", name)
         data = locals()[name](name)
-        ts = time.time()
+        if data == "Error":
+            continue
         #print(tmpdir + name + '/' + '*')
         list_of_files = glob.glob(tmpdir + name + '/' + '*')
         if list_of_files:
             latest_file_name = max(list_of_files)
             latest_file = open(latest_file_name, 'r')
 
-            stream = latest_file.read().splitlines()[2:]
+            stream = latest_file.read().splitlines()[2:-2]
             datastream = data.splitlines()
 
             if (stream == datastream):
@@ -99,9 +116,10 @@ while True:
                 result = list(d.compare(stream, datastream))
                 #print(result)
 
-        filename = os.path.join(tmpdir, name + '/' + str(int(ts)))
         curtime = time.strftime('%X %x %Z')
-        towrite = name + ': ' + curtime + '\n' + SOURCE_URLS[name] + '\n' + data
+        timestamp_name = str(int(time.mktime(datetime.datetime.strptime(curtime[:-4], "%H:%M:%S %m/%d/%y").timetuple())))
+        filename = os.path.join(tmpdir, name + '/' + timestamp_name)
+        towrite = name + ': ' + curtime + '\n' + SOURCE_URLS[name] + '\n' + data + '\n\n' + timestamp_name
 
         print(filename)
         f = open(filename, 'w+')
@@ -109,6 +127,10 @@ while True:
         f.close()
         print('new dump at ' + curtime)
 
-        os.system('python3 manage.py test_command --path ' + filename + ' --category ' + category_IDs[name])        
+        
 
-    time.sleep(10)
+
+        os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])        
+
+    print("sleeping for " + str(sleeptime) + " seconds")
+    time.sleep(sleeptime)

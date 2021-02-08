@@ -17,7 +17,7 @@ import json
 
 
 
-sleeptime = 10
+sleeptime = 300
 
 SOURCE_URLS = {
     "jeffersonhealthcare": "https://jeffersonhealthcare.org/covid-19-vaccine/",

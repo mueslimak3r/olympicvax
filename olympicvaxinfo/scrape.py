@@ -10,6 +10,8 @@ import glob
 import re
 import os
 
+from sendmail import sendmail
+
 import json
 
 
@@ -20,13 +22,13 @@ sleeptime = 10
 SOURCE_URLS = {
     "jeffersonhealthcare": "https://jeffersonhealthcare.org/covid-19-vaccine/",
     "cameronlambert": "https://cameronlambert.com/",
-    "bainbridgeprepares": "https://covidbi.timetap.com/businessWeb/csapi/cs/scheduler/handle/covidbi?unpublished=false",
+    #"bainbridgeprepares": "https://covidbi.timetap.com/businessWeb/csapi/cs/scheduler/handle/covidbi?unpublished=false",
 }
 
 category_IDs = {
     "jeffersonhealthcare": "3",
     "cameronlambert": "6",
-    "bainbridgeprepares": "4",
+    #"bainbridgeprepares": "4",
 }
 
 basedir = os.path.dirname(os.path.realpath(__file__))
@@ -116,8 +118,9 @@ headers = {
 
     #soup = BeautifulSoup(response.text, "json.parser")
     #soup = json.loads(response.json)
-    dictionary = json.loads(str(response.text))
-    print(dictionary['welcomeText'])
+    #dictionary = json.loads(str(response.text))
+    #rint(dictionary['welcomeText'])
+    print(response)
     return "Error"
     #mydivs = soup.find("div", {"id": "welcomeText"})
     #data = '\r\n'.join([x for x in mydivs.splitlines() if x.strip()])
@@ -177,9 +180,7 @@ while True:
         f.write(towrite)
         f.close()
         print('new dump at ' + curtime)
-
-        
-
+        sendmail("Jeffco Mailing List: New Post", towrite)
 
         os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])        
 

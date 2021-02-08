@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 import time
 import datetime
 import glob
-import re
 import os
 
 from sendmail import sendmail
@@ -17,7 +16,7 @@ import json
 
 
 
-sleeptime = 300
+sleeptime = 10
 
 SOURCE_URLS = {
     "jeffersonhealthcare": "https://jeffersonhealthcare.org/covid-19-vaccine/",
@@ -54,8 +53,16 @@ def jeffersonhealthcare(name):
         print("bad")
         return soup
 
-    mydivs = soup.findAll("div", {"class": "vc_row"})[1].get_text()
-    data = '\r\n'.join([x for x in mydivs.splitlines() if x.strip()])
+    mydivs = soup.findAll("div", {"class": "vc_column-inner"})
+
+    data = ""
+    #for div in mydivs:
+    for div in range(len(mydivs)):
+        tmptext = mydivs[div].get_text()
+        tmptext = '\n'.join([x for x in tmptext.splitlines() if x.strip()])
+        data = data + '\n\n\n' + tmptext
+        #print(tmptext)
+    print(data)
     return data
 
 def cameronlambert(name):
@@ -64,9 +71,15 @@ def cameronlambert(name):
         print("worked")
         return soup
 
-    mydivs = soup.find("p").get_text()
-    #data = '\r\n'.join([x for x in mydivs.splitlines() if x.strip()])
-    return mydivs
+    mydivs = soup.findAll("a")
+    data = ""
+    #for div in mydivs:
+    for div in range(len(mydivs)):
+        tmptext = mydivs[div].get_text()
+        tmptext = '\n'.join([x for x in tmptext.splitlines() if x.strip()])
+        data = data + '\n\n\n' + tmptext
+    #print(data)
+    return data
 
 def bainbridgeprepares(name):
     #soup = scrape(SOURCE_URLS[name])
@@ -128,7 +141,7 @@ headers = {
 
 # set up folder structure to save page dumps for each source in their own subdirectory
 
-os.system('python3 manage.py save-top-posts-to-file --path ' + tmpdir)
+#os.system('python3 manage.py save-top-posts-to-file --path ' + tmpdir)
 
 try:
     os.mkdir(tmpdir)
@@ -152,6 +165,7 @@ while True:
         if data == "Error":
             continue
         #print(tmpdir + name + '/' + '*')
+        #print(data)
         list_of_files = glob.glob(tmpdir + name + '/' + '*')
         if list_of_files:
             latest_file_name = max(list_of_files)
@@ -180,9 +194,9 @@ while True:
         f.write(towrite)
         f.close()
         print('new dump at ' + curtime)
-        sendmail("Jeffco Mailing List: New Post", towrite)
+        #sendmail("Jeffco Mailing List: New Post", towrite)
 
-        os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])        
+        #os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])        
 
     print("sleeping for " + str(sleeptime) + " seconds")
-    time.sleep(sleeptime)
+    break #time.sleep(sleeptime)

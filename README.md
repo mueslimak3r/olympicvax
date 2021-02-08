@@ -5,4 +5,4 @@ scheduled vax availability monitor for olypic peninsula area in washington state
 
 tested using python 3.8.6
 
-python -m pip install django
+python -m pip install django requests beautifulsoup4

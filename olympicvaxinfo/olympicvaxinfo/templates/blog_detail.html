@@ -11,7 +11,8 @@
         </a>&nbsp;
         {% endfor %}
     </small>
-    <p>{{ post.body | linebreaks }}</p>
+    <br>
     <a href={{ post.siteurl }}>{{ post.siteurl }}</a>
+    <p>{{ post.body | linebreaks }}</p>
 </div>
 {% endblock %}

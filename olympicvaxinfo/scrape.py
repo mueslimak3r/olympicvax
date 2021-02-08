@@ -20,13 +20,13 @@ sleeptime = 10
 
 SOURCE_URLS = {
     "jeffersonhealthcare": "https://jeffersonhealthcare.org/covid-19-vaccine/",
-    "cameronlambert": "https://cameronlambert.com/",
+    #"cameronlambert": "https://cameronlambert.com/",
     #"bainbridgeprepares": "https://covidbi.timetap.com/businessWeb/csapi/cs/scheduler/handle/covidbi?unpublished=false",
 }
 
 category_IDs = {
     "jeffersonhealthcare": "3",
-    "cameronlambert": "6",
+    #"cameronlambert": "6",
     #"bainbridgeprepares": "4",
 }
 
@@ -62,7 +62,7 @@ def jeffersonhealthcare(name):
         tmptext = '\n'.join([x for x in tmptext.splitlines() if x.strip()])
         data = data + '\n\n\n' + tmptext
         #print(tmptext)
-    print(data)
+    #print(data)
     return data
 
 def cameronlambert(name):
@@ -194,9 +194,9 @@ while True:
         f.write(towrite)
         f.close()
         print('new dump at ' + curtime)
-        #sendmail("Jeffco Mailing List: New Post", towrite)
+        sendmail("Jeffco Mailing List: New Post", towrite)
 
-        #os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])        
+        os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])        
 
     print("sleeping for " + str(sleeptime) + " seconds")
-    break #time.sleep(sleeptime)
+    time.sleep(sleeptime)

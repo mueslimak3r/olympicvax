@@ -16,7 +16,7 @@ import json
 
 
 
-sleeptime = 10
+sleeptime = 300
 
 SOURCE_URLS = {
     "jeffersonhealthcare": "https://jeffersonhealthcare.org/covid-19-vaccine/",
@@ -141,7 +141,7 @@ headers = {
 
 # set up folder structure to save page dumps for each source in their own subdirectory
 
-#os.system('python3 manage.py save-top-posts-to-file --path ' + tmpdir)
+os.system('python3 manage.py save-top-posts-to-file --path ' + tmpdir)
 
 try:
     os.mkdir(tmpdir)

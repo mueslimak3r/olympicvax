@@ -3,6 +3,7 @@
 
 <div class="row mb-2">
     {% for recentpost in categories_latests %}
+    
     <div class="col-md-6">
         <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
           <div class="col p-4 d-flex flex-column position-static">
@@ -21,52 +22,8 @@
           </div>
         </div>
     </div>
+
     {% endfor %}
 </div>
 
-<!--
-<div class="col-md-8 offset-md-2">
-    
-
-    <h2>Latest Updates</h2>
-
-    {% for recentpost in categories_latests %}
-        <h2><a href="{% url 'blog_detail' recentpost.pk%}">{{ recentpost.title }}</a></h2>
-        <small>
-            {{ recentpost.created_on.date }} |&nbsp;
-            Categories:&nbsp;
-            {% for category in recentpost.categories.all %}
-            <a href="{% url 'blog_category' category.name %}">
-                {{ category.name }}
-            </a>&nbsp;
-            {% endfor %}
-        </small>
-        <p>{{ recentpost.body | slice:":400" }}...</p>
-    {% endfor %}
-
-    <hr>
-    <hr>
-    <hr>
-    <hr>
-    <hr>
-    <hr>
-    <hr>
-    <h2>All Posts</h2>
-
-    {% for post in posts %}
-    <h2><a href="{% url 'blog_detail' post.pk%}">{{ post.title }}</a></h2>
-    <small>
-        {{ post.created_on.date }} |&nbsp;
-        Categories:&nbsp;
-        {% for category in post.categories.all %}
-        <a href="{% url 'blog_category' category.name %}">
-            {{ category.name }}
-        </a>&nbsp;
-        {% endfor %}
-    </small>
-    <p>{{ post.body | slice:":400" }}...</p>
-    {% endfor %}
-
-</div>
--->
 {% endblock %}

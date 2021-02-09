@@ -22,12 +22,14 @@ SOURCE_URLS = {
     "jeffersonhealthcare": "https://jeffersonhealthcare.org/covid-19-vaccine/",
     #"cameronlambert": "https://cameronlambert.com/",
     "bainbridgeprepares": "https://covidbi.timetap.com/",
+    "islanddrug": "https://islanddrug.com/pages/covidvaccine/",
 }
 
 category_IDs = {
     "jeffersonhealthcare": "3",
     #"cameronlambert": "6",
     "bainbridgeprepares": "4",
+    "islanddrug": "7",
 }
 
 basedir = os.path.dirname(os.path.realpath(__file__))
@@ -50,8 +52,8 @@ def scrape(url = None):
 def jeffersonhealthcare(name):
     soup = scrape(SOURCE_URLS[name])
     if soup == "Error":
-        print("bad")
-        return soup
+        print("jeffersonhealthcare: scraper error")
+        return "Error"
 
     mydivs = soup.findAll("div", {"class": "vc_column-inner"})
 
@@ -64,6 +66,20 @@ def jeffersonhealthcare(name):
         #print(tmptext)
     #print(data)
     return data
+
+def islanddrug(name):
+    soup = scrape(SOURCE_URLS[name])
+    if soup == "Error":
+        print("islanddrug: scraper error")
+        return "Error"
+
+    mydivs = soup.findAll("div", {"class": "entry-content"})
+
+    if mydivs:
+        text = mydivs[0].get_text()
+        data = '\n'.join([x for x in text.splitlines() if x.strip()])
+        return (data)
+    return "Error"
 
 def cameronlambert(name):
     soup = scrape(SOURCE_URLS[name])

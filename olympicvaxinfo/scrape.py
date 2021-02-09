@@ -149,7 +149,7 @@ while True:
         curtime = time.strftime('%X %x %Z')
         timestamp_name = str(int(time.mktime(datetime.datetime.strptime(curtime[:-4], "%H:%M:%S %m/%d/%y").timetuple())))
         filename = os.path.join(tmpdir, name + '/' + timestamp_name)
-        towrite = name + ': ' + curtime + '\n' + SOURCE_URLS[name] + '\n' + data + '\n\n' + timestamp_name
+        towrite = curtime + '\n' + SOURCE_URLS[name] + '\n' + data + '\n\n' + timestamp_name
 
         print(filename)
         f = open(filename, 'w+')

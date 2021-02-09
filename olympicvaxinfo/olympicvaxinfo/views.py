@@ -13,6 +13,21 @@ def get_latest_from_category(category):
         firstpost = None
     return (firstpost)
 
+def blog_base(request):
+    posts = Post.objects.all().order_by('-created_on')
+    categories = Category.objects.all().order_by('-name')
+    categories_latests = []
+    for c in categories:
+        tmp = get_latest_from_category(c)
+        if tmp:
+            categories_latests.append(tmp)
+    context = {
+        "posts": posts,
+        "categories": categories,
+        "categories_latests": categories_latests,
+    }
+    return render(request, "blog_index.html", context)
+
 def blog_index(request):
     posts = Post.objects.all().order_by('-created_on')
     categories = Category.objects.all().order_by('-name')
@@ -34,9 +49,14 @@ def blog_category(request, category):
     ).order_by(
         '-created_on'
     )
+    if posts:
+        url = posts[0].siteurl
+    else:
+        url = ""
     context = {
         "category": category,
-        "posts": posts
+        "posts": posts,
+        "siteurl": url
     }
     return render(request, "blog_category.html", context)
 

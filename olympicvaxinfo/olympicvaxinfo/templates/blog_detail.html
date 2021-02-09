@@ -4,7 +4,7 @@
     <h1>{{ post.title }}</h1>
     <small>
         <!--{{ post.created_on.date }} |&nbsp;-->
-        Source:&nbsp;
+        Archive:&nbsp;
         {% for category in post.categories.all %}
         <a href="{% url 'blog_category' category.name %}">
             {{ category.name }}
@@ -12,7 +12,7 @@
         {% endfor %}
     </small>
     <br>
-    <a href={{ post.siteurl }}>{{ post.siteurl }}</a>
+    Source:&nbsp; <a href={{ post.siteurl }}>{{ post.siteurl }}</a>
     <p>{{ post.body | linebreaks }}</p>
 </div>
 {% endblock %}

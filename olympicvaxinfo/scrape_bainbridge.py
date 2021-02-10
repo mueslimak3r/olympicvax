@@ -21,15 +21,20 @@ def scrape_bainbridge(url):
     # put driver executable file in the script directory
     chrome_driver = '/usr/bin/chromedriver'#os.path.join(os.getcwd(), "chromedriver")
 
-    driver = webdriver.Chrome(options=chrome_options, executable_path=chrome_driver)
-
+    try:
+        driver = webdriver.Chrome(options=chrome_options, executable_path=chrome_driver)
+    except:
+        print("bainbridge scraper: timeout")
+        return ("Error")
+    print("chrome driver started")
     driver.get(url)
 
     try:
-        xyz = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CSS_SELECTOR,'mat-card-content'))).text
+        xyz = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CSS_SELECTOR,'mat-card-content')))
     except TimeoutException:
         print("\tJavascript Web Scraper: Timed out")
         return "Error"
+    print("page loaded")
     element = driver.find_element(By.TAG_NAME, 'div')
 
     elements = element.find_elements(By.TAG_NAME, 'mat-card-content')

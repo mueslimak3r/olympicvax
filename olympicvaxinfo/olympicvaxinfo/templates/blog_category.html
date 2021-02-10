@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block page_content %}
 <div class="row mb-2">
-    <h1 class="text-success">{{ category | title }}</h1>
+    <h1 style="color: #f0622b">{{ category | title }}</h1>
     <p><a href="{{ siteurl }}">{{ siteurl }}</a></p>
     <hr>
     {% for post in posts %}

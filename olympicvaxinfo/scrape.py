@@ -17,7 +17,7 @@ import json
 
 
 
-sleeptime = 10
+sleeptime = 300
 
 SOURCE_URLS = {
     "jeffersonhealthcare": "https://jeffersonhealthcare.org/covid-19-vaccine/",
@@ -148,7 +148,7 @@ while True:
         f.write(towrite)
         f.close()
         print('new dump at ' + curtime)
-        sendmail(name, SOURCE_URLS[name], towrite)
+        sendmail(name, SOURCE_URLS[name], towrite, timestamp_name)
 
         os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])        
 

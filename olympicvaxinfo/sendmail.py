@@ -8,7 +8,7 @@ def make_mail(sourcename, url, body, timestamp, fromaddr, toaddr):
 
     truncated_body = (body[:bodylength - 3] + '...') if len(body) > bodylength else body
 
-    final_body = "new update from %s at %s\n%s\n\nTo read the full update please visit %s at: %s\n\n\n\n\n%s" % (sourcename, timestamp, truncated_body, sourcename, url, unsubtext)
+    final_body = "new update from %s at %s\n%s\n\nTo read the full update, please visit %s at: %s\n\n\n\n\n%s" % (sourcename, timestamp, truncated_body, sourcename, url, unsubtext)
 
     command = "echo '%s' | mailx -r %s -s '%s' %s" % (final_body, fromaddr, subject, toaddr)
     return (command)

@@ -10,13 +10,14 @@ import glob
 import os
 
 from sendmail import sendmail
+from diffoutputs import diffoutputs
 from scrape_bainbridge import scrape_bainbridge
 import json
 
 
 
 
-sleeptime = 300
+sleeptime = 10
 
 SOURCE_URLS = {
     "jeffersonhealthcare": "https://jeffersonhealthcare.org/covid-19-vaccine/",
@@ -38,8 +39,7 @@ tmpdir = basedir + '/website-dumps/'
 def scrape(url = None):
     if url == None:
         return
-    #headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-    # download the homepage
+
     try:
         response = requests.get(url, timeout = 5)
         print("downloaded")
@@ -89,7 +89,6 @@ def cameronlambert(name):
 
     mydivs = soup.findAll("a")
     data = ""
-    #for div in mydivs:
     for div in range(len(mydivs)):
         tmptext = mydivs[div].get_text()
         tmptext = '\n'.join([x for x in tmptext.splitlines() if x.strip()])
@@ -133,18 +132,11 @@ while True:
             latest_file_name = max(list_of_files)
             latest_file = open(latest_file_name, 'r')
 
-            stream = latest_file.read().splitlines()[2:-2]
-            datastream = data.splitlines()
+            stream = "\n".join(latest_file.read().splitlines()[2:-2])
+            datastream = "\n".join(data.splitlines())
 
-            if (stream == datastream):
-                print('no change')
+            if (diffoutputs(stream, datastream) == False):
                 continue
-            else:
-                print('detected change')
-
-                d = difflib.Differ()
-                result = list(d.compare(stream, datastream))
-                #print(result)
 
         curtime = time.strftime('%X %x %Z')
         timestamp_name = str(int(time.mktime(datetime.datetime.strptime(curtime[:-4], "%H:%M:%S %m/%d/%y").timetuple())))
@@ -156,7 +148,7 @@ while True:
         f.write(towrite)
         f.close()
         print('new dump at ' + curtime)
-        sendmail("Jeffco Mailing List: New Post", towrite)
+        sendmail(name, SOURCE_URLS[name], towrite)
 
         os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])        
 

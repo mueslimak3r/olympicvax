@@ -34,10 +34,10 @@ category_IDs = {
 }
 
 category_diff_margins = {
-    "jeffersonhealthcare": "3",
-    #"cameronlambert": "6",
-    "bainbridgeprepares": "1",
-    "islanddrug": "2",
+    "jeffersonhealthcare": 3,
+    #"cameronlambert": 1,
+    "bainbridgeprepares": 1,
+    "islanddrug": 2,
 }
 
 basedir = os.path.dirname(os.path.realpath(__file__))

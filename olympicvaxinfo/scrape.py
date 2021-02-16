@@ -33,6 +33,13 @@ category_IDs = {
     "islanddrug": "7",
 }
 
+category_diff_margins = {
+    "jeffersonhealthcare": "3",
+    #"cameronlambert": "6",
+    "bainbridgeprepares": "1",
+    "islanddrug": "2",
+}
+
 basedir = os.path.dirname(os.path.realpath(__file__))
 tmpdir = basedir + '/website-dumps/'
 
@@ -135,7 +142,7 @@ while True:
             stream = "\n".join(latest_file.read().splitlines()[2:-2])
             datastream = "\n".join(data.splitlines())
 
-            if (diffoutputs(stream, datastream) == False):
+            if (diffoutputs(stream, datastream, category_diff_margins[name]) == False):
                 continue
 
         curtime = time.strftime('%X %x %Z')
@@ -148,7 +155,7 @@ while True:
         f.write(towrite)
         f.close()
         print('new dump at ' + curtime)
-        sendmail(name, SOURCE_URLS[name], towrite, timestamp_name)
+        sendmail(name, SOURCE_URLS[name], data, curtime)
 
         os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])        
 

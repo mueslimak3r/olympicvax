@@ -4,9 +4,7 @@ import sys
 basedir = os.path.dirname(os.path.realpath(__file__))
 tmpdir = basedir + '/website-dumps/'
 
-margin = 2
-
-def diffoutputs(oldstr, newstr):
+def diffoutputs(oldstr, newstr, margin):
     oldList = [string.strip() for string in oldstr.splitlines()]
     oldSet = set([x for x in oldList if not x.startswith('This page was last updated')])
 

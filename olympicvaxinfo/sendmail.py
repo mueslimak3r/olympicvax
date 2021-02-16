@@ -3,12 +3,12 @@ import os
 bodylength = 500
 
 def make_mail(sourcename, url, body, timestamp, fromaddr, toaddr):
-    subject = "JeffCo Vax Mailing List - new update from %s" % (sourcename)
+    subject = "JeffCo Vax - new update from %s" % (sourcename)
     unsubtext = "To unsubscribe from this mailing list, click on this link: [[UNSUB_LINK_LOCALE]]"
 
     truncated_body = (body[:bodylength - 3] + '...') if len(body) > bodylength else body
 
-    final_body = "new update from %s at %s\n%s\n\nTo read the full update, please visit %s at: %s\nFor more information about this email see https://jeffcovax.cameronlambert.com\n\n\n\n\n%s" % (sourcename, timestamp, truncated_body, sourcename, url, unsubtext)
+    final_body = "new update from %s at %s\n%s\n\nTo read the full update, please visit %s at: %s\nFor more information about this email see: https://jeffcovax.cameronlambert.com\n\n\n\n\n%s" % (sourcename, timestamp, truncated_body, sourcename, url, unsubtext)
 
     command = "echo '%s' | mailx -r %s -s '%s' %s" % (final_body, fromaddr, subject, toaddr)
     return (command)

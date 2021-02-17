@@ -16,7 +16,7 @@ def diffoutputs(oldstr, newstr, margin):
     if len(outputSet) == 0:
         print('exact match')
         return (False)
-    elif len(outputSet) < margin:
+    elif len(outputSet) <= margin:
         print('close enough')
         return (False)
     else:

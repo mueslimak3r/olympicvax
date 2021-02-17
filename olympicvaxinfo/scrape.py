@@ -34,7 +34,7 @@ category_IDs = {
 }
 
 category_diff_margins = {
-    "jeffersonhealthcare": 3,
+    "jeffersonhealthcare": 2,
     #"cameronlambert": 1,
     "bainbridgeprepares": 1,
     "islanddrug": 2,

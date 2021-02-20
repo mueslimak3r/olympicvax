@@ -7,9 +7,11 @@ def make_mail(sourcename, url, body, timestamp, fromaddr, toaddr):
     unsubtext = "To unsubscribe from this mailing list, click on this link: [[UNSUB_LINK_LOCALE]]"
 
     truncated_body = body#(body[:bodylength - 3] + '...') if len(body) > bodylength else body
-
-    final_body = "new update from %s at %s\n%s\n\nTo read the full update, please visit %s at: %s\nFor more information about this email see: https://jeffcovax.cameronlambert.com\n\n\n\n\n%s" % (sourcename, timestamp, truncated_body, sourcename, url, unsubtext)
-
+    header = "new update from %s at %s\nThis email is provided by an unofficial notification service. It is NOT affiliated with any public health office or any organization providing vaccination\n\
+\nTo read the full update, please visit %s at: %s\nExcerpt from the update:" % (sourcename, timestamp, sourcename, url)
+    footer = "You are receiving this email from the JeffCoVax notification tool because you are on the mailing list of jeffcovax.cameronlambert.com\n\
+This is an automated notification that the following vaccine website has recently updated: %s\n\n\n%s" % (sourcename, unsubtext)
+    final_body = "%s%s\n\n\n\n\n%s" % (header, truncated_body, footer)
     command = "echo '%s' | mailx -r %s -s '%s' %s" % (final_body, fromaddr, subject, toaddr)
     return (command)
 
@@ -18,11 +20,11 @@ def make_test_mail(sourcename, url, body, timestamp, fromaddr, toaddr):
     unsubtext = "To unsubscribe from this mailing list, click on this link: [[UNSUB_LINK_LOCALE]]"
 
     truncated_body = body#(body[:bodylength - 3] + '...') if len(body) > bodylength else body
-    header = "new update from %s at %s\n\nThis email is provided by an unofficial notification service. It is NOT affiliated with any public health office or any organization providing vaccination\n\
+    header = "new update from %s at %s\nThis email is provided by an unofficial notification service. It is NOT affiliated with any public health office or any organization providing vaccination\n\
 \nTo read the full update, please visit %s at: %s\nExcerpt from the update:" % (sourcename, timestamp, sourcename, url)
     footer = "You are receiving this email from the JeffCoVax notification tool because you are on the mailing list of jeffcovax.cameronlambert.com\n\
-This is an automated notification that the following vaccine website has recently updated: %s\n\n\n\n\n%s" % (sourcename, unsubtext)
-    final_body = "%s\n\n%s\n\n%s" % (header, truncated_body, footer)
+This is an automated notification that the following vaccine website has recently updated: %s\n\n\n%s" % (sourcename, unsubtext)
+    final_body = "%s%s\n\n\n\n\n%s" % (header, truncated_body, footer)
     command = "echo '%s' | mailx -r %s -s '%s' %s" % (final_body, fromaddr, subject, toaddr)
     return (command)
 

@@ -4,6 +4,18 @@ import sys
 basedir = os.path.dirname(os.path.realpath(__file__))
 tmpdir = basedir + '/website-dumps/'
 
+bodylength = 500
+
+def make_sample(diff_list = None):
+    if diff_list == None:
+        return ""
+    ret = ""
+    for iter in range(min(len(diff_list), 2)):
+        body = diff_list[iter]
+        truncated_str = (body[:bodylength - 3] + '...') if len(body) > bodylength else body
+        ret = ret + '\n\n' + truncated_str
+    return ret
+
 def diffoutputs(oldstr, newstr, margin):
     oldList = [string.strip() for string in oldstr.splitlines()]
     oldSet = set([x for x in oldList if not x.startswith('This page was last updated')])
@@ -15,15 +27,15 @@ def diffoutputs(oldstr, newstr, margin):
 
     if len(outputSet) == 0:
         print('exact match')
-        return ('exact match')
+        return ('exact match', "")
     elif len(outputSet) <= margin:
         print('close enough')
-        return ('close enough')
+        return ('close enough', "")
     else:
         print('significant change')
         print("number of lines that diff: %d" % (len(outputSet)))
-        #print("\n\n\n\n ".join(outputSet))
-        return ('significant change')
+        ret = make_sample(sorted(outputSet, key=len, reverse=True))
+        return ('significant change', ret)
     print('error')
     return ('error')
 

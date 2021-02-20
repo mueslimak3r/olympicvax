@@ -108,6 +108,8 @@ def bainbridgeprepares(name):
         return "Error"
     return data
 
+
+
 os.system('python3 manage.py save-top-posts-to-file --path ' + tmpdir)
 
 try:
@@ -135,13 +137,14 @@ while True:
         #print(data)
         list_of_files = glob.glob(tmpdir + name + '/' + '*')
         diffresult = ""
+        diff_sample = ""
         if list_of_files:
             latest_file_name = max(list_of_files)
             latest_file = open(latest_file_name, 'r')
 
             stream = "\n".join(latest_file.read().splitlines()[2:-2])
             datastream = "\n".join(data.splitlines())
-            diffresult = diffoutputs(stream, datastream, category_diff_margins[name])
+            diffresult, diff_sample = diffoutputs(stream, datastream, category_diff_margins[name])
             if diffresult == 'exact match' or diffresult == 'error':
                 continue
 
@@ -158,9 +161,9 @@ while True:
         if diffresult == 'significant change':
             print('significant change posted at ' + curtime)
             if "ISSERVER" in os.environ:
-                sendmail(name, SOURCE_URLS[name], data, curtime)
+                sendmail(name, SOURCE_URLS[name], diff_sample, curtime)
                 os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])
             else:
-                testmail(name, SOURCE_URLS[name], data, curtime)
+                testmail(name, SOURCE_URLS[name], diff_sample, curtime)
     print("sleeping for " + str(sleeptime) + " seconds")
     time.sleep(sleeptime)

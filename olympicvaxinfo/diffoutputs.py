@@ -15,17 +15,17 @@ def diffoutputs(oldstr, newstr, margin):
 
     if len(outputSet) == 0:
         print('exact match')
-        return (False)
+        return ('exact match')
     elif len(outputSet) <= margin:
         print('close enough')
-        return (False)
+        return ('close enough')
     else:
         print('significant change')
         print("number of lines that diff: %d" % (len(outputSet)))
         #print("\n\n\n\n ".join(outputSet))
-        return (True)
-    print('weird error')
-    return (False)
+        return ('significant change')
+    print('error')
+    return ('error')
 
 def run_test(oldname, newname):
     oldfile = open(oldname, 'r')

@@ -8,8 +8,7 @@ import time
 import datetime
 import glob
 import os
-
-from sendmail import sendmail
+from sendmail import sendmail, testmail
 from diffoutputs import diffoutputs
 from scrape_bainbridge import scrape_bainbridge
 import json
@@ -135,14 +134,15 @@ while True:
         #print(tmpdir + name + '/' + '*')
         #print(data)
         list_of_files = glob.glob(tmpdir + name + '/' + '*')
+        diffresult = ""
         if list_of_files:
             latest_file_name = max(list_of_files)
             latest_file = open(latest_file_name, 'r')
 
             stream = "\n".join(latest_file.read().splitlines()[2:-2])
             datastream = "\n".join(data.splitlines())
-
-            if (diffoutputs(stream, datastream, category_diff_margins[name]) == False):
+            diffresult = diffoutputs(stream, datastream, category_diff_margins[name])
+            if diffresult == 'exact match' or diffresult == 'error':
                 continue
 
         curtime = time.strftime('%X %x %Z')
@@ -154,10 +154,13 @@ while True:
         f = open(filename, 'w+')
         f.write(towrite)
         f.close()
-        print('new dump at ' + curtime)
-        sendmail(name, SOURCE_URLS[name], data, curtime)
-
-        os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])        
-
+        print('saved to file at ' + curtime) 
+        if diffresult == 'significant change':
+            print('significant change posted at ' + curtime)
+            if "ISSERVER" in os.environ:
+                sendmail(name, SOURCE_URLS[name], data, curtime)
+                os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])
+            else:
+                testmail(name, SOURCE_URLS[name], data, curtime)
     print("sleeping for " + str(sleeptime) + " seconds")
     time.sleep(sleeptime)

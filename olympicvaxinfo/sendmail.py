@@ -16,13 +16,13 @@ def make_mail(sourcename, url, body, timestamp, fromaddr, toaddr):
 def sendmail(sourcename, url, body, timestamp):
     command = make_mail(sourcename, url, body, timestamp, 'jeffcovax@cameronlambert.com', 'xntl5lpu1@lists.mailjet.com')
     print("sending mail to mailing list")
-    print (command)
+    #print (command)
     os.system(command)
 
 def testmail(sourcename, url, body, timestamp):
     command = make_mail(sourcename, url, body, timestamp, 'jeffcovax@cameronlambert.com', 'cameronlambert98@gmail.com')
     print("sending test mail")
-    print (command)
+    #print (command)
     os.system(command)
 
 thing = 'Jefferson Healthcare is public hospital located in Port Townsend, Washington \

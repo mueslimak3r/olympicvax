@@ -109,6 +109,10 @@ def bainbridgeprepares(name):
     return data
 
 
+if "ISSERVER" in os.environ:
+    print('RUNNING ON SERVER')
+else:
+    print('RUNNING IN TEST MODE')
 
 os.system('python3 manage.py save-top-posts-to-file --path ' + tmpdir)
 

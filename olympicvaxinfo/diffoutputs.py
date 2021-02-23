@@ -1,6 +1,9 @@
 import os
 import sys    
 
+import colorama
+from colorama import Fore, Style
+
 basedir = os.path.dirname(os.path.realpath(__file__))
 tmpdir = basedir + '/website-dumps/'
 
@@ -26,14 +29,14 @@ def diffoutputs(oldstr, newstr, margin):
     outputSet = list(newSet.difference(oldSet))
 
     if len(outputSet) == 0:
-        print('exact match')
+        print(Fore.MAGENTA + Style.DIM + 'exact match' + Fore.RESET + Style.NORMAL)
         return ('exact match', "")
     elif len(outputSet) <= margin:
-        print('close enough')
+        print(Fore.CYAN + Style.DIM + 'close enough' + Fore.RESET + Style.NORMAL)
         return ('close enough', "")
     else:
-        print('significant change')
-        print("number of lines that diff: %d" % (len(outputSet)))
+        print(Fore.YELLOW + 'significant change')
+        print("number of lines that diff: %d" % (len(outputSet)) + Fore.RESET)
         ret = make_sample(sorted(outputSet, key=len, reverse=True))
         return ('significant change', ret)
     print('error')

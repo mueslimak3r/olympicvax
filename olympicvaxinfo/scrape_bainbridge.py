@@ -9,6 +9,9 @@ from selenium.common.exceptions import TimeoutException
 
 import os
 
+import colorama
+from colorama import Fore, Style
+
 timeout = 8
 
 def scrape_bainbridge(url):
@@ -24,17 +27,17 @@ def scrape_bainbridge(url):
     try:
         driver = webdriver.Chrome(options=chrome_options, executable_path=chrome_driver)
     except:
-        print("bainbridge scraper: timeout")
+        print(Fore.RED + "bainbridge scraper: timeout" + Fore.RESET)
         return ("Error")
-    print("chrome driver started")
+    print(Style.DIM + "chrome driver started" + Style.NORMAL)
     driver.get(url)
 
     try:
         xyz = WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CSS_SELECTOR,'mat-card-content')))
     except TimeoutException:
-        print("\tJavascript Web Scraper: Timed out")
+        print(Fore.RED + "\tJavascript Web Scraper: Timed out" + Fore.RESET)
         return "Error"
-    print("page loaded")
+    print(Style.DIM + "page loaded" + Style.NORMAL)
     element = driver.find_element(By.TAG_NAME, 'div')
 
     elements = element.find_elements(By.TAG_NAME, 'mat-card-content')

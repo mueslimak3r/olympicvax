@@ -13,6 +13,8 @@ from diffoutputs import diffoutputs
 from scrape_bainbridge import scrape_bainbridge
 import json
 
+import colorama
+from colorama import Fore, Style
 
 
 
@@ -48,17 +50,17 @@ def scrape(url = None):
 
     try:
         response = requests.get(url, timeout = 5)
-        print("downloaded")
+        print(Style.DIM + "downloaded" + Style.NORMAL)
         soup = BeautifulSoup(response.text, "html.parser")
         return (soup)
     except:
-        print("response error!")
+        print(Fore.RED + "response error!" + Fore.RESET)
         return ("Error") 
 
 def jeffersonhealthcare(name):
     soup = scrape(SOURCE_URLS[name])
     if soup == "Error":
-        print("jeffersonhealthcare: scraper error")
+        print(Fore.RED + "jeffersonhealthcare: scraper error" + Fore.RESET)
         return "Error"
 
     mydivs = soup.findAll("div", {"class": "vc_column-inner"})
@@ -76,7 +78,7 @@ def jeffersonhealthcare(name):
 def islanddrug(name):
     soup = scrape(SOURCE_URLS[name])
     if soup == "Error":
-        print("islanddrug: scraper error")
+        print(Fore.RED + "islanddrug: scraper error" + Fore.RESET)
         return "Error"
 
     mydivs = soup.findAll("div", {"class": "entry-content"})
@@ -90,7 +92,7 @@ def islanddrug(name):
 def cameronlambert(name):
     soup = scrape(SOURCE_URLS[name])
     if soup == "Error":
-        print("worked")
+        print(Fore.RED + "cameronlambert: scraper error" + Fore.RESET)
         return soup
 
     mydivs = soup.findAll("a")
@@ -108,13 +110,20 @@ def bainbridgeprepares(name):
         return "Error"
     return data
 
+colorama.init()
 
 if "ISSERVER" in os.environ:
-    print('RUNNING ON SERVER')
+    print(Fore.RED + 'RUNNING ON SERVER' + Fore.RESET)
+    if not "SECRET_KEY" in os.environ:
+        print(Fore.RED + "'SECRET_KEY' not in environ" + Fore.RESET)
+        exit()
 else:
-    print('RUNNING IN TEST MODE')
+    print(Fore.RED + 'RUNNING IN TEST MODE' + Fore.RESET)
 
-os.system('python3 manage.py save-top-posts-to-file --path ' + tmpdir)
+if "SECRET_KEY" in os.environ:
+    os.system('python3 manage.py save-top-posts-to-file --path ' + tmpdir)
+else:
+    print(Fore.YELLOW + "Warning: 'SECRET_KEY' not in environ" + Fore.RESET)
 
 try:
     os.mkdir(tmpdir)
@@ -133,7 +142,7 @@ import difflib
 
 while True:
     for name in SOURCE_URLS:
-        print("name: ", name)
+        print(Style.BRIGHT + "name: " + name + Style.NORMAL)
         data = locals()[name](name)
         if data == "Error":
             continue
@@ -151,7 +160,8 @@ while True:
             diffresult, diff_sample = diffoutputs(stream, datastream, category_diff_margins[name])
             if diffresult == 'exact match' or diffresult == 'error':
                 continue
-
+        else:
+            diffresult = 'significant change'
         curtime = time.strftime('%X %x %Z')
         timestamp_name = str(int(time.mktime(datetime.datetime.strptime(curtime[:-4], "%H:%M:%S %m/%d/%y").timetuple())))
         filename = os.path.join(tmpdir, name + '/' + timestamp_name)
@@ -161,13 +171,13 @@ while True:
         f = open(filename, 'w+')
         f.write(towrite)
         f.close()
-        print('saved to file at ' + curtime) 
+        print(Fore.GREEN + 'change detected. Saved to file at ' + curtime + Fore.RESET) 
         if diffresult == 'significant change':
-            print('significant change posted at ' + curtime)
-            if "ISSERVER" in os.environ:
+            print(Fore.YELLOW + 'change posted to database' + Fore.RESET)
+            if "ISSERVER" in os.environ and "SECRET_KEY" in os.environ:
                 sendmail(name, SOURCE_URLS[name], diff_sample, curtime)
                 os.system('python3 manage.py new-post-from-file --path ' + filename + ' --category ' + category_IDs[name])
             else:
                 testmail(name, SOURCE_URLS[name], diff_sample, curtime)
-    print("sleeping for " + str(sleeptime) + " seconds")
+    print(Fore.BLUE + "sleeping for " + str(sleeptime) + " seconds" + Fore.RESET)
     time.sleep(sleeptime)

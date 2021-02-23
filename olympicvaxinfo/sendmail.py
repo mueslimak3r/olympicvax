@@ -1,5 +1,8 @@
 import os
 
+import colorama
+from colorama import Fore, Style
+
 bodylength = 500
 
 def make_mail(sourcename, url, body, timestamp, fromaddr, toaddr):
@@ -30,13 +33,13 @@ This is an automated notification that the following vaccine website has recentl
 
 def sendmail(sourcename, url, body, timestamp):
     command = make_mail(sourcename, url, body, timestamp, 'jeffcovax@cameronlambert.com', 'xntl5lpu1@lists.mailjet.com')
-    print("sending mail to mailing list")
+    print(Fore.Yellow + "sending mail to mailing list" + Fore.RESET)
     #print (command)
     os.system(command)
 
 def testmail(sourcename, url, body, timestamp):
     command = make_test_mail(sourcename, url[8:], body, timestamp, 'jeffcovax@cameronlambert.com', 'cameronlambert98@gmail.com')
-    print("sending test mail")
+    print(Fore.YELLOW + "sending test mail" + Fore.RESET)
     #print (command)
     os.system(command)
 

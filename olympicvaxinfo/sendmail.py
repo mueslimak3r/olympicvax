@@ -14,7 +14,7 @@ def sendit(mailfrom, mailto, subject, body):
         {
         "From": {
             "Email": mailfrom,
-            "Name": "Cameron"
+            "Name": "JeffCo Vax"
         },
         "To": [
             {

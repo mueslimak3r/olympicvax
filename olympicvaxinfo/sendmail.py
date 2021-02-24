@@ -1,11 +1,38 @@
-import os
-
+from mailjet_rest import Client
 import colorama
 from colorama import Fore, Style
+import os
 
+api_key = os.environ['MJ_APIKEY_PUBLIC']
+api_secret = os.environ['MJ_APIKEY_PRIVATE']
+mailjet = Client(auth=(api_key, api_secret), version='v3.1')
 bodylength = 500
 
-def make_mail(sourcename, url, body, timestamp, fromaddr, toaddr):
+def sendit(mailfrom, mailto, subject, body):
+    data = {
+    'Messages': [
+        {
+        "From": {
+            "Email": mailfrom,
+            "Name": "Cameron"
+        },
+        "To": [
+            {
+            "Email": mailto,
+            "Name": "You"
+            }
+        ],
+        "Subject": subject,
+        "TextPart": body
+        }
+    ]
+    }
+    result = mailjet.send.create(data=data)
+    print (result.status_code)
+    print (result.json())
+
+
+def make_mail(sourcename, url, body, timestamp):
     subject = "JeffCo Vax - new update from %s" % (sourcename)
     unsubtext = "To unsubscribe from this mailing list, click on this link: [[UNSUB_LINK_LOCALE]]"
 
@@ -15,33 +42,17 @@ def make_mail(sourcename, url, body, timestamp, fromaddr, toaddr):
     footer = "You are receiving this email from the JeffCoVax notification tool because you are on the mailing list of jeffcovax.cameronlambert.com\n\
 This is an automated notification that the following vaccine website has recently updated: %s\n\n\n%s" % (sourcename, unsubtext)
     final_body = "%s%s\n\n\n\n\n%s" % (header, truncated_body, footer)
-    command = "echo '%s' | mailx -r %s -s '%s' %s" % (final_body, fromaddr, subject, toaddr)
-    return (command)
-
-def make_test_mail(sourcename, url, body, timestamp, fromaddr, toaddr):
-    subject = "JeffCo Vax - new update from %s" % (sourcename)
-    unsubtext = "To unsubscribe from this mailing list, click on this link: [[UNSUB_LINK_LOCALE]]"
-
-    truncated_body = body#(body[:bodylength - 3] + '...') if len(body) > bodylength else body
-    header = "new update from %s at %s\nThis email is provided by an unofficial notification service. It is NOT affiliated with any public health office or any organization providing vaccination\n\
-\nTo read the full update, please visit %s at: %s\nExcerpt from the update:" % (sourcename, timestamp, sourcename, url)
-    footer = "You are receiving this email from the JeffCoVax notification tool because you are on the mailing list of jeffcovax.cameronlambert.com\n\
-This is an automated notification that the following vaccine website has recently updated: %s\n\n\n%s" % (sourcename, unsubtext)
-    final_body = "%s%s\n\n\n\n\n%s" % (header, truncated_body, footer)
-    command = "echo '%s' | mailx -r %s -s '%s' %s" % (final_body, fromaddr, subject, toaddr)
-    return (command)
+    return (subject, final_body)
 
 def sendmail(sourcename, url, body, timestamp):
-    command = make_mail(sourcename, url, body, timestamp, 'jeffcovax@cameronlambert.com', 'xntl5lpu1@lists.mailjet.com')
-    print(Fore.Yellow + "sending mail to mailing list" + Fore.RESET)
-    #print (command)
-    os.system(command)
+    subject, body = make_mail(sourcename, url, body, timestamp)
+    sendit('jeffcovax@cameronlambert.com', 'xntl5lpu1@lists.mailjet.com', subject, body)
+    print(Fore.YELLOW + "sending mail to mailing list" + Fore.RESET)
 
 def testmail(sourcename, url, body, timestamp):
-    command = make_test_mail(sourcename, url[8:], body, timestamp, 'jeffcovax@cameronlambert.com', 'cameronlambert98@gmail.com')
+    subject, body = make_mail(sourcename, url, body, timestamp)
+    sendit('jeffcovax@cameronlambert.com', 'cameronlambert98@gmail.com', subject, body)
     print(Fore.YELLOW + "sending test mail" + Fore.RESET)
-    #print (command)
-    os.system(command)
 
 thing = 'Jefferson Healthcare is public hospital located in Port Townsend, Washington \
 This page was last updated 02/15/2021 at 1:55 pm \
